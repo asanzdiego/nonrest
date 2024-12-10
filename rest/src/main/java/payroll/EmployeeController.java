@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 // tag::hateoas-imports[]
 // end::hateoas-imports[]
 
+/**
+ * REST controller for managing Employee resources.
+ * Provides endpoints for standard CRUD operations and includes functionality to return HATEOAS-compliant responses.
+ */
 @RestController
 class EmployeeController {
 
@@ -32,6 +36,14 @@ class EmployeeController {
 
 	// Aggregate root
 
+
+	/**
+	 * Retrieves a collection of all employees as HATEOAS-compliant resources.
+	 * Generates links for each employee resource and includes a self-referential link for the collection.
+	 *
+	 * @return A CollectionModel containing EntityModel representations of all employees,
+	 *         each with its own self-referential link and a link to the collection.
+	 */
 	// tag::get-aggregate-root[]
 	@GetMapping("/employees")
 	CollectionModel<EntityModel<Employee>> all() {
@@ -82,8 +94,8 @@ class EmployeeController {
 				});
 	}
 
-@DeleteMapping("/employees/{id}")
-void deleteEmployee(@PathVariable Long id) {
-	repository.deleteById(id);
-}
+	@DeleteMapping("/employees/{id}")
+	void deleteEmployee(@PathVariable Long id) {
+		repository.deleteById(id);
+	}
 }
