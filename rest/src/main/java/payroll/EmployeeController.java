@@ -114,6 +114,16 @@ class EmployeeController {
 	}
 
 	/**
+	 * Deletes an employee by ID.
+	 *
+	 * @param id the ID of the employee to delete
+	 */
+	@DeleteMapping("/employees/{id}")
+	void deleteEmployee(@PathVariable Long id) {
+		repository.deleteById(id);
+	}
+
+	/**
 	 * Returns a string representation of the EmployeeController.
 	 *
 	 * @return a string representation of the EmployeeController
