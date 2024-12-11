@@ -1,3 +1,4 @@
+
 package payroll;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
@@ -16,12 +17,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-// tag::hateoas-imports[]
-// end::hateoas-imports[]
-
 /**
- * REST controller for managing Employee resources.
- * Provides endpoints for standard CRUD operations and includes functionality to return HATEOAS-compliant responses.
+ * REST controller for managing Employee resources. Provides endpoints for
+ * standard CRUD operations and includes functionality to return
+ * HATEOAS-compliant responses.
  */
 @RestController
 class EmployeeController {
@@ -29,22 +28,28 @@ class EmployeeController {
 	private final EmployeeRepository repository;
 	private final AbstractScriptDatabaseInitializer abstractScriptDatabaseInitializer;
 
-	EmployeeController(EmployeeRepository repository, AbstractScriptDatabaseInitializer abstractScriptDatabaseInitializer) {
+	/**
+	 * Constructor for EmployeeController.
+	 *
+	 * @param repository                        the repository to manage Employee
+	 *                                          entities
+	 * @param abstractScriptDatabaseInitializer the database initializer
+	 */
+	EmployeeController(EmployeeRepository repository,
+			AbstractScriptDatabaseInitializer abstractScriptDatabaseInitializer) {
 		this.repository = repository;
 		this.abstractScriptDatabaseInitializer = abstractScriptDatabaseInitializer;
 	}
 
-	// Aggregate root
-
-
 	/**
 	 * Retrieves a collection of all employees as HATEOAS-compliant resources.
-	 * Generates links for each employee resource and includes a self-referential link for the collection.
+	 * Generates links for each employee resource and includes a self-referential
+	 * link for the collection.
 	 *
-	 * @return A CollectionModel containing EntityModel representations of all employees,
-	 *         each with its own self-referential link and a link to the collection.
+	 * @return A CollectionModel containing EntityModel representations of all
+	 *         employees, each with its own self-referential link and a link to the
+	 *         collection.
 	 */
-	// tag::get-aggregate-root[]
 	@GetMapping("/employees")
 	CollectionModel<EntityModel<Employee>> all() {
 
@@ -56,28 +61,42 @@ class EmployeeController {
 
 		return CollectionModel.of(employees, linkTo(methodOn(EmployeeController.class).all()).withSelfRel());
 	}
-	// end::get-aggregate-root[]
 
+	/**
+	 * Creates a new employee.
+	 *
+	 * @param newEmployee the employee to be created
+	 * @return the created employee
+	 */
 	@PostMapping("/employees")
 	Employee newEmployee(@RequestBody Employee newEmployee) {
 		return repository.save(newEmployee);
 	}
 
-	// Single item
+	/**
+	 * Retrieves a single employee by ID as a HATEOAS-compliant resource.
+	 *
+	 * @param id the ID of the employee to retrieve
+	 * @return an EntityModel containing the employee and its links
+	 */
+	EntityModel<Employee> one(Long id) {
 
-	// tag::get-single-item[]
-	@GetMapping("/employees/{id}")
-	EntityModel<Employee> one(@PathVariable Long id) {
-
-		Employee employee = repository.findById(id)
+		Employee employee = repository.findById(id) //
 				.orElseThrow(() -> new EmployeeNotFoundException(id));
 
 		return EntityModel.of(employee, //
 				linkTo(methodOn(EmployeeController.class).one(id)).withSelfRel(),
 				linkTo(methodOn(EmployeeController.class).all()).withRel("employees"));
 	}
-	// end::get-single-item[]
 
+	/**
+	 * Updates an existing employee or creates a new one if the employee does not
+	 * exist.
+	 *
+	 * @param newEmployee the employee data to update
+	 * @param id          the ID of the employee to update
+	 * @return the updated or newly created employee
+	 */
 	@PutMapping("/employees/{id}")
 	Employee updateExistingEmployee(@RequestBody Employee newEmployee, @PathVariable Long id) {
 
@@ -94,8 +113,15 @@ class EmployeeController {
 				});
 	}
 
-	@DeleteMapping("/employees/{id}")
-	void deleteEmployee(@PathVariable Long id) {
-		repository.deleteById(id);
+	/**
+	 * Returns a string representation of the EmployeeController.
+	 *
+	 * @return a string representation of the EmployeeController
+	 */
+	@Override
+	public String toString() {
+		return "EmployeeController{" + "repository=" + repository + ", abstractScriptDatabaseInitializer="
+				+ abstractScriptDatabaseInitializer + '}';
 	}
-}
+		
+	}
